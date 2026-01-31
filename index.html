@@ -6,59 +6,139 @@
   <title>KitchenClips – Save Recipes Instantly</title>
   <meta name="description" content="KitchenClips is an iOS Safari extension that lets you save, share, and organize recipes from any website." />
   <style>
+    :root {
+      --kc-accent: #ffc550;
+      --kc-accent-dark: #e4a63a;
+      --kc-bg: #fff7e8;
+      --kc-text: #2f2a24;
+      --kc-muted: #6f6255;
+      --kc-card: #ffffff;
+      --kc-border: rgba(47, 42, 36, 0.1);
+    }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background: #fffaf4;
-      color: #333;
+      background: var(--kc-bg);
+      color: var(--kc-text);
       line-height: 1.6;
     }
+    * {
+      box-sizing: border-box;
+    }
     header {
-      background: #80c4c4;
-      color: white;
-      padding: 2rem 1rem;
+      background: var(--kc-bg);
+      color: var(--kc-text);
+      padding: 3.25rem 1.5rem 1.5rem;
       text-align: center;
     }
     header h1 {
       margin: 0 0 0.5rem;
-      font-size: 2.5rem;
+      font-size: clamp(2.4rem, 4vw, 3.25rem);
+      letter-spacing: -0.02em;
     }
     header p {
-      font-size: 1.25rem;
+      font-size: 1.1rem;
+      margin: 0 auto;
+      max-width: 520px;
+      color: #4a3f33;
     }
     .logo {
-      max-width: 120px;
-      margin-bottom: 1rem;
+      max-width: 88px;
+      margin-bottom: 1.25rem;
       border-radius: 20px;
     }
     main {
-      max-width: 800px;
-      margin: 2rem auto;
-      padding: 0 1rem;
+      max-width: 760px;
+      margin: 0 auto 2.5rem;
+      padding: 0 1.5rem 2rem;
     }
     section {
-      margin-bottom: 2rem;
+      margin-bottom: 1.75rem;
     }
     h2 {
-      color: #80c4c4;
-    }
-    .cta {
-      background: #80c4c4;
-      color: white;
-      padding: 1rem 2rem;
-      text-align: center;
-      border-radius: 8px;
-      display: inline-block;
-      text-decoration: none;
-      font-weight: bold;
-      margin-top: 1rem;
+      color: var(--kc-accent-dark);
+      font-size: 1.2rem;
+      margin: 0 0 0.65rem;
     }
     footer {
       text-align: center;
       font-size: 0.875rem;
-      color: #888;
-      padding: 2rem 1rem;
+      color: var(--kc-muted);
+      padding: 2rem 1rem 2.5rem;
+    }
+    .contact-link {
+      color: var(--kc-accent-dark);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .contact-link:hover {
+      text-decoration: underline;
+    }
+    .shell {
+      background: var(--kc-card);
+      border-radius: 16px;
+      padding: 2.25rem;
+      border: 1px solid var(--kc-border);
+    }
+    .hero {
+      display: grid;
+      gap: 1.75rem;
+      grid-template-columns: minmax(0, 1fr);
+      align-items: center;
+    }
+    .badge-row {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 1.25rem;
+    }
+    .app-store-badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--kc-border);
+      transition: transform 0.2s ease;
+    }
+    .app-store-badge img {
+      display: block;
+      height: 48px;
+      width: auto;
+    }
+    .app-store-badge:hover {
+      transform: translateY(-2px);
+    }
+    .split {
+      display: grid;
+      gap: 2rem;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      margin-top: 1.5rem;
+    }
+    .steps {
+      margin: 0;
+      padding-left: 1.2rem;
+      color: var(--kc-muted);
+    }
+    .steps li {
+      margin-bottom: 0.6rem;
+    }
+    .plain-list {
+      margin: 0;
+      padding-left: 1.2rem;
+      color: var(--kc-muted);
+    }
+    .plain-list li {
+      margin-bottom: 0.6rem;
+    }
+    @media (min-width: 860px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+      header {
+        padding: 3.75rem 1.5rem 1.75rem;
+      }
     }
   </style>
 </head>
@@ -66,29 +146,46 @@
   <header>
     <img src="assets/Icon.png" alt="KitchenClips logo" class="logo" />
     <h1>KitchenClips</h1>
-    <p>Save recipes from any website right from Safari</p>
+    <p>Clip recipes from anywhere. Save them instantly. Keep the essentials.</p>
   </header>
   <main>
-    <section>
-      <h2>📌 What is KitchenClips?</h2>
-      <p>KitchenClips is a lightweight iOS Safari extension that lets you clip recipes from any website and save them instantly. Clean, simple, and built for cooks on the go.</p>
-    </section>
-    <section>
-      <h2>✨ Features</h2>
-      <ul>
-        <li>Save recipes from any website in one tap</li>
-        <li>Share via Airdrop, Messages, or email</li>
-        <li>Save to Notes or Files for easy access</li>
-        <li>Clean and minimal formatting</li>
-      </ul>
-    </section>
-    <section>
-      <h2>📱 Get Started</h2>
-      <p>Download KitchenClips from the App Store and enable it in Safari Extensions under iOS Settings.</p>
-      <div style="display: flex; justify-content: center;">
-          <a class="cta" href="#">Download on the App Store</a>
-      </div>
-    </section>
+    <div class="shell">
+      <section class="hero">
+        <div>
+          <h2>One-tap recipe clipping for Safari</h2>
+          <p>KitchenClips is a lightweight iOS Safari extension that captures recipes from any site and saves them with clean formatting. It keeps your favorites organized and ready whenever you want to cook.</p>
+          <div class="badge-row">
+            <a class="app-store-badge" href="https://apps.apple.com/us/app/kitchenclips/id6749102051">
+              <img src="assets/app-store-badge.svg" alt="Download on the App Store" />
+            </a>
+            <span>Enable in iOS Settings → Safari → Extensions.</span>
+          </div>
+        </div>
+        <div>
+          <h2>Features</h2>
+          <ul class="plain-list">
+            <li>Save recipes from any website in one tap.</li>
+            <li>Share via AirDrop, Messages, or email.</li>
+            <li>Save to Notes or Files for easy access.</li>
+            <li>Clean, minimal formatting.</li>
+          </ul>
+        </div>
+      </section>
+      <section class="split">
+        <div>
+          <h2>Install in minutes</h2>
+          <ol class="steps">
+            <li>Download KitchenClips from the App Store.</li>
+            <li>Open iOS Settings → Safari → Extensions.</li>
+            <li>Turn on KitchenClips and start clipping.</li>
+          </ol>
+        </div>
+        <div>
+          <h2>Questions or feedback?</h2>
+          <p>We love hearing from cooks. Email us at <a class="contact-link" href="mailto:kitchenclips311@gmail.com">kitchenclips311@gmail.com</a>.</p>
+        </div>
+      </section>
+    </div>
   </main>
   <footer>
     &copy; 2025 KitchenClips. All rights reserved.
