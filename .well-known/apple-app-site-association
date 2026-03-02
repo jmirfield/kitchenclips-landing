@@ -1,0 +1,15 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "V6QJQF8JJ9.mirf.KitchenClips",
+        "paths": ["/share", "/share/*"]
+      },
+      {
+        "appID": "V6QJQF8JJ9.org.kitchenclips",
+        "paths": ["/share", "/share/*"]
+      }
+    ]
+  }
+}

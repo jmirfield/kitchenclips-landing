@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KitchenClips Recipe Share</title>
+    <style>
+      :root {
+        --bg-top: #f8f2ea;
+        --bg-bottom: #f3f7ef;
+        --card: #ffffff;
+        --ink: #1d2a2f;
+        --muted: #5f6a70;
+        --accent: #c95f1f;
+        --accent-strong: #a94a11;
+        --line: #e6e2db;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 20% -10%, #fff5dc 0%, transparent 50%),
+          radial-gradient(circle at 90% 0%, #deecff 0%, transparent 45%),
+          linear-gradient(160deg, var(--bg-top), var(--bg-bottom));
+      }
+
+      .shell {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 24px 16px 40px;
+        animation: fadeUp 360ms ease-out;
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        box-shadow: 0 16px 40px rgba(20, 30, 40, 0.08);
+        overflow: hidden;
+      }
+
+      .hero {
+        padding: 22px 20px 14px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .eyebrow {
+        margin: 0;
+        font-size: 12px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      h1 {
+        margin: 8px 0 0;
+        font-size: clamp(26px, 5.4vw, 36px);
+        line-height: 1.06;
+      }
+
+      .meta {
+        padding: 16px 20px 8px;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .meta-item {
+        border: 1px solid var(--line);
+        border-radius: 11px;
+        padding: 10px 8px;
+        text-align: center;
+        background: #fffdf9;
+      }
+
+      .meta-item strong {
+        display: block;
+        font-size: 14px;
+      }
+
+      .meta-item span {
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .section {
+        padding: 10px 20px 4px;
+      }
+
+      .section h2 {
+        margin: 10px 0 8px;
+        font-size: 16px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .lines {
+        margin: 0;
+        padding: 0 0 0 18px;
+      }
+
+      .lines li {
+        margin: 0 0 8px;
+        line-height: 1.45;
+      }
+
+      .source-link {
+        display: inline-flex;
+        margin: 14px 20px 2px;
+        color: var(--accent-strong);
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      .source-link:hover {
+        text-decoration: underline;
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        padding: 18px 20px 20px;
+      }
+
+      .button {
+        appearance: none;
+        border: 0;
+        border-radius: 11px;
+        padding: 11px 15px;
+        text-decoration: none;
+        font-weight: 700;
+        transition: transform 180ms ease, opacity 180ms ease, background 180ms ease;
+      }
+
+      .button.primary {
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .button.secondary {
+        background: #f5f1eb;
+        color: var(--ink);
+      }
+
+      .button:hover {
+        transform: translateY(-1px);
+      }
+
+      .button[aria-disabled="true"] {
+        opacity: 0.45;
+        pointer-events: none;
+      }
+
+      .empty {
+        padding: 18px 20px 20px;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 560px) {
+        .meta {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <article class="card">
+        <header class="hero">
+          <p class="eyebrow">KitchenClips Share</p>
+          <h1 id="title">Recipe unavailable</h1>
+        </header>
+
+        <section id="meta" class="meta" hidden></section>
+        <section id="ingredientsSection" class="section" hidden>
+          <h2>Ingredients</h2>
+          <ol id="ingredients" class="lines"></ol>
+        </section>
+        <section id="instructionsSection" class="section" hidden>
+          <h2>Instructions</h2>
+          <ol id="instructions" class="lines"></ol>
+        </section>
+
+        <a id="sourceLink" class="source-link" href="#" rel="noopener noreferrer" hidden>View source page</a>
+        <div id="empty" class="empty" hidden></div>
+
+        <footer class="actions">
+          <a id="openApp" class="button primary" href="#" aria-disabled="true">Open in KitchenClips</a>
+          <a
+            class="button secondary"
+            href="https://apps.apple.com/us/search?term=KitchenClips"
+            rel="noopener noreferrer"
+          >
+            Get KitchenClips
+          </a>
+        </footer>
+      </article>
+    </main>
+
+    <script>
+      (function () {
+        const params = new URLSearchParams(window.location.search);
+        const sourceURL = normalizeURL(params.get("url"));
+        const encodedRecipe = params.get("recipe");
+
+        const titleNode = document.getElementById("title");
+        const metaNode = document.getElementById("meta");
+        const ingredientsSection = document.getElementById("ingredientsSection");
+        const ingredientsNode = document.getElementById("ingredients");
+        const instructionsSection = document.getElementById("instructionsSection");
+        const instructionsNode = document.getElementById("instructions");
+        const sourceLinkNode = document.getElementById("sourceLink");
+        const emptyNode = document.getElementById("empty");
+        const openAppNode = document.getElementById("openApp");
+
+        const recipe = decodeRecipe(encodedRecipe);
+        const recipeTitle = clean(recipe && recipe.name);
+        const ingredients = cleanLines(recipe && recipe.ingredients);
+        const instructions = cleanLines(recipe && recipe.instructions);
+        const servings = clean(firstOf(recipe && recipe.yields)) || clean(recipe && recipe.servings);
+        const prep = clean(recipe && recipe.prepTime);
+        const cook = clean(recipe && recipe.cookTime);
+        const total = clean(recipe && recipe.totalTime);
+
+        if (recipeTitle) {
+          titleNode.textContent = recipeTitle;
+          document.title = `${recipeTitle} | KitchenClips`;
+        } else if (sourceURL) {
+          titleNode.textContent = "Shared recipe";
+        }
+
+        const hasRecipeContent = Boolean(recipeTitle || ingredients.length || instructions.length || servings || prep || cook || total);
+        if (!hasRecipeContent) {
+          emptyNode.hidden = false;
+          emptyNode.textContent = "Recipe data is missing or invalid. You can still try opening this in KitchenClips.";
+        }
+
+        renderMeta(metaNode, [
+          { label: "Servings", value: servings },
+          { label: "Prep", value: prep },
+          { label: "Cook", value: cook },
+          { label: "Total", value: total }
+        ]);
+
+        renderLines(ingredientsSection, ingredientsNode, ingredients);
+        renderLines(instructionsSection, instructionsNode, instructions);
+
+        if (sourceURL) {
+          sourceLinkNode.hidden = false;
+          sourceLinkNode.href = sourceURL;
+        }
+
+        const deepLink = buildDeepLink(sourceURL, encodedRecipe);
+        if (deepLink) {
+          openAppNode.href = deepLink;
+          openAppNode.setAttribute("aria-disabled", "false");
+        }
+      })();
+
+      function clean(value) {
+        if (typeof value !== "string") return null;
+        const trimmed = value.trim();
+        return trimmed ? trimmed : null;
+      }
+
+      function firstOf(value) {
+        return Array.isArray(value) && value.length > 0 ? value[0] : null;
+      }
+
+      function cleanLines(values) {
+        if (!Array.isArray(values)) return [];
+        return values
+          .map(clean)
+          .filter(Boolean);
+      }
+
+      function normalizeURL(rawValue) {
+        const value = clean(rawValue);
+        if (!value) return null;
+        try {
+          const parsed = new URL(value);
+          if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+            return parsed.toString();
+          }
+          return null;
+        } catch (_) {
+          try {
+            const parsed = new URL(`https://${value}`);
+            return parsed.toString();
+          } catch (_) {
+            return null;
+          }
+        }
+      }
+
+      function decodeRecipe(payload) {
+        const value = clean(payload);
+        if (!value) return null;
+        const normalized = value.replace(/-/g, "+").replace(/_/g, "/");
+        const padLength = (4 - (normalized.length % 4)) % 4;
+        const padded = normalized + "=".repeat(padLength);
+
+        try {
+          const binary = atob(padded);
+          const bytes = Uint8Array.from(binary, (ch) => ch.charCodeAt(0));
+          const json = new TextDecoder().decode(bytes);
+          return JSON.parse(json);
+        } catch (_) {
+          return null;
+        }
+      }
+
+      function renderMeta(container, items) {
+        const visibleItems = items.filter((item) => Boolean(item.value));
+        if (!visibleItems.length) {
+          container.hidden = true;
+          return;
+        }
+
+        container.hidden = false;
+        container.innerHTML = "";
+        for (const item of visibleItems) {
+          const card = document.createElement("div");
+          card.className = "meta-item";
+          const valueNode = document.createElement("strong");
+          valueNode.textContent = item.value;
+          const labelNode = document.createElement("span");
+          labelNode.textContent = item.label;
+          card.appendChild(valueNode);
+          card.appendChild(labelNode);
+          container.appendChild(card);
+        }
+      }
+
+      function renderLines(sectionNode, listNode, values) {
+        if (!values.length) {
+          sectionNode.hidden = true;
+          return;
+        }
+
+        sectionNode.hidden = false;
+        listNode.innerHTML = "";
+        for (const value of values) {
+          const li = document.createElement("li");
+          li.textContent = value;
+          listNode.appendChild(li);
+        }
+      }
+
+      function buildDeepLink(sourceURL, recipePayload) {
+        const query = new URLSearchParams();
+        if (sourceURL) query.set("url", sourceURL);
+        if (clean(recipePayload)) query.set("recipe", recipePayload);
+        const queryString = query.toString();
+        if (!queryString) return null;
+        return `kitchenclips://import?${queryString}`;
+      }
+    </script>
+  </body>
+</html>
