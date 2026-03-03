@@ -4,6 +4,20 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>KitchenClips Recipe Share</title>
+    <meta name="description" content="Open shared recipes directly in KitchenClips." />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="KitchenClips" />
+    <meta property="og:title" content="KitchenClips Recipe Share" />
+    <meta property="og:description" content="Open shared recipes directly in KitchenClips." />
+    <meta property="og:url" content="https://kitchenclips.org/share" />
+    <meta property="og:image" content="https://kitchenclips.org/share/share-preview.png" />
+    <meta property="og:image:width" content="1024" />
+    <meta property="og:image:height" content="1024" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="KitchenClips Recipe Share" />
+    <meta name="twitter:description" content="Open shared recipes directly in KitchenClips." />
+    <meta name="twitter:image" content="https://kitchenclips.org/share/share-preview.png" />
+    <meta name="apple-itunes-app" content="app-id=6749102051" />
     <style>
       :root {
         --kc-accent: #ffc550;
@@ -276,11 +290,12 @@
 
           <footer class="kc-overlay-actions">
             <a
+              id="openKitchenClipsButton"
               class="kc-overlay-btn kc-overlay-btn--secondary"
               href="https://apps.apple.com/us/app/kitchenclips/id6749102051"
               rel="noopener noreferrer"
             >
-              Get KitchenClips
+              Open KitchenClips
             </a>
           </footer>
         </div>
@@ -290,6 +305,7 @@
     <script>
       (function () {
         const params = new URLSearchParams(window.location.search);
+        const appStoreURL = "https://apps.apple.com/us/app/kitchenclips/id6749102051";
         const sourceURL = normalizeURL(params.get("url"));
         const encodedRecipe = params.get("recipe");
 
@@ -301,6 +317,7 @@
         const instructionsNode = document.getElementById("instructions");
         const sourceLinkNode = document.getElementById("sourceLink");
         const emptyNode = document.getElementById("empty");
+        const openKitchenClipsButton = document.getElementById("openKitchenClipsButton");
 
         const recipe = decodeRecipe(encodedRecipe);
         const recipeTitle = clean(recipe && recipe.name);
@@ -343,8 +360,10 @@
         }
 
         const deepLink = buildDeepLink(sourceURL, encodedRecipe);
+        configureOpenKitchenClipsButton(openKitchenClipsButton, deepLink, appStoreURL);
+
         if (deepLink) {
-          attemptAutoOpenDeepLink(deepLink);
+          attemptAutoOpenDeepLink(deepLink, appStoreURL);
         }
       })();
 
@@ -446,7 +465,18 @@
         }
       }
 
-      function attemptAutoOpenDeepLink(deepLink) {
+      function configureOpenKitchenClipsButton(buttonNode, deepLink, appStoreURL) {
+        if (!buttonNode) return;
+
+        buttonNode.href = appStoreURL;
+        buttonNode.addEventListener("click", (event) => {
+          if (!deepLink) return;
+          event.preventDefault();
+          openDeepLinkWithStoreFallback(deepLink, appStoreURL, { launchDelayMs: 0 });
+        });
+      }
+
+      function attemptAutoOpenDeepLink(deepLink, appStoreURL) {
         const params = new URLSearchParams(window.location.search);
         if (params.get("no_auto_open") === "1") return;
 
@@ -469,10 +499,32 @@
           // Ignore storage errors and still attempt once.
         }
 
+        openDeepLinkWithStoreFallback(deepLink, appStoreURL, { launchDelayMs: 120 });
+      }
+
+      function openDeepLinkWithStoreFallback(deepLink, appStoreURL, options = {}) {
+        const launchDelayMs = Number.isFinite(options.launchDelayMs) ? options.launchDelayMs : 0;
+        const fallbackDelayMs = Number.isFinite(options.fallbackDelayMs) ? options.fallbackDelayMs : 1400;
+
+        let pageHidden = false;
+        const handleVisibilityChange = () => {
+          if (document.visibilityState === "hidden") {
+            pageHidden = true;
+          }
+        };
+
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+
         window.setTimeout(() => {
           if (document.visibilityState !== "visible") return;
           window.location.assign(deepLink);
-        }, 120);
+        }, launchDelayMs);
+
+        window.setTimeout(() => {
+          document.removeEventListener("visibilitychange", handleVisibilityChange);
+          if (pageHidden || document.visibilityState !== "visible") return;
+          window.location.assign(appStoreURL);
+        }, launchDelayMs + fallbackDelayMs);
       }
 
       function buildDeepLink(sourceURL, recipePayload) {
