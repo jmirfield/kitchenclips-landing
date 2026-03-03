@@ -177,7 +177,7 @@
         display: grid;
         margin-top: 20px;
         padding-top: 16px;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: 1fr;
         align-items: stretch;
         column-gap: 8px;
         row-gap: 8px;
@@ -216,11 +216,6 @@
 
       .kc-overlay-btn--secondary:hover {
         background: #f8f9fa;
-      }
-
-      .kc-overlay-btn[aria-disabled="true"] {
-        opacity: 0.65;
-        pointer-events: none;
       }
 
       @media (max-width: 22em) {
@@ -280,7 +275,6 @@
           <div id="empty" class="kc-empty" hidden></div>
 
           <footer class="kc-overlay-actions">
-            <a id="openApp" class="kc-overlay-btn kc-overlay-btn--primary" href="#" aria-disabled="true">Open in KitchenClips</a>
             <a
               class="kc-overlay-btn kc-overlay-btn--secondary"
               href="https://apps.apple.com/us/search?term=KitchenClips"
@@ -307,7 +301,6 @@
         const instructionsNode = document.getElementById("instructions");
         const sourceLinkNode = document.getElementById("sourceLink");
         const emptyNode = document.getElementById("empty");
-        const openAppNode = document.getElementById("openApp");
 
         const recipe = decodeRecipe(encodedRecipe);
         const recipeTitle = clean(recipe && recipe.name);
@@ -351,8 +344,7 @@
 
         const deepLink = buildDeepLink(sourceURL, encodedRecipe);
         if (deepLink) {
-          openAppNode.href = deepLink;
-          openAppNode.setAttribute("aria-disabled", "false");
+          attemptAutoOpenDeepLink(deepLink);
         }
       })();
 
@@ -452,6 +444,35 @@
           item.textContent = value;
           listNode.appendChild(item);
         }
+      }
+
+      function attemptAutoOpenDeepLink(deepLink) {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("no_auto_open") === "1") return;
+
+        const ua = navigator.userAgent || "";
+        const isIOS = /iPhone|iPad|iPod/i.test(ua) ||
+          (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+        if (!isIOS) return;
+
+        const attemptFingerprint = [
+          window.location.pathname,
+          params.get("url") || "",
+          params.get("recipe") || ""
+        ].join("|");
+        const attemptKey = "kc-share-auto-open:" + attemptFingerprint;
+
+        try {
+          if (sessionStorage.getItem(attemptKey) === "1") return;
+          sessionStorage.setItem(attemptKey, "1");
+        } catch (_) {
+          // Ignore storage errors and still attempt once.
+        }
+
+        window.setTimeout(() => {
+          if (document.visibilityState !== "visible") return;
+          window.location.assign(deepLink);
+        }, 120);
       }
 
       function buildDeepLink(sourceURL, recipePayload) {
