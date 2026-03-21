@@ -3,28 +3,29 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>KitchenClips Recipe Share</title>
-    <meta name="description" content="Open shared recipes directly in KitchenClips." />
+    <title>Open in KitchenClips</title>
+    <meta name="description" content="Open this shared recipe in KitchenClips." />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="KitchenClips" />
-    <meta property="og:title" content="KitchenClips Recipe Share" />
-    <meta property="og:description" content="Open shared recipes directly in KitchenClips." />
+    <meta property="og:title" content="Open in KitchenClips" />
+    <meta property="og:description" content="Open this shared recipe in the KitchenClips app." />
     <meta property="og:url" content="https://kitchenclips.org/share" />
     <meta property="og:image" content="https://kitchenclips.org/share/share-preview.png" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="KitchenClips Recipe Share" />
-    <meta name="twitter:description" content="Open shared recipes directly in KitchenClips." />
+    <meta name="twitter:title" content="Open in KitchenClips" />
+    <meta name="twitter:description" content="Open this shared recipe in the KitchenClips app." />
     <meta name="twitter:image" content="https://kitchenclips.org/share/share-preview.png" />
     <meta name="apple-itunes-app" content="app-id=6749102051" />
     <style>
       :root {
-        --kc-accent: #ffc550;
-        --kc-accent-dark: #e6b148;
-        --kc-bg: #ffffff;
-        --kc-surface: #ffffff;
-        --kc-text: #212529;
-        --kc-muted: #6c757d;
-        --kc-border: #e9ecef;
+        --kc-bg: #f7efe2;
+        --kc-card: rgba(255, 255, 255, 0.92);
+        --kc-card-border: rgba(82, 64, 44, 0.12);
+        --kc-text: #2e241b;
+        --kc-muted: #6e6256;
+        --kc-accent: #f0b649;
+        --kc-accent-strong: #db9c26;
+        --kc-shadow: 0 18px 40px rgba(73, 49, 22, 0.12);
       }
 
       * {
@@ -34,346 +35,172 @@
       html,
       body {
         margin: 0;
-        padding: 0;
         min-height: 100%;
-        background: var(--kc-bg);
+      }
+
+      body {
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background:
+          radial-gradient(circle at top, rgba(255, 255, 255, 0.85), transparent 42%),
+          linear-gradient(180deg, #fbf4e8 0%, var(--kc-bg) 100%);
         color: var(--kc-text);
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
       }
 
-      .kc-overlay-shell {
-        max-width: 760px;
-        margin: 0 auto;
-        min-height: 100vh;
-      }
-
-      .kc-overlay-recipe {
-        background: var(--kc-surface);
-        border: 1px solid var(--kc-border);
-        border-radius: 0;
-        overflow: hidden;
-      }
-
-      .kc-card-content {
-        padding: 16px;
-      }
-
-      .kc-overlay-recipe__header {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 8px;
-        margin-bottom: 12px;
-        padding-bottom: 10px;
-        border-bottom: 1px solid var(--kc-border);
-      }
-
-      .kc-overlay-recipe__title {
-        margin: 0;
-        font-size: 1.15em;
-        font-weight: 600;
-        line-height: 1.4;
-        color: var(--kc-text);
-      }
-
-      .kc-overlay-recipe__meta {
-        display: none;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        margin-bottom: 12px;
-        color: var(--kc-muted);
-      }
-
-      .kc-overlay-recipe__meta-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 2px;
-        min-width: 0;
-        padding: 10px 8px;
-        border-right: 1px solid var(--kc-border);
+      .kc-card {
+        width: min(100%, 420px);
+        padding: 32px 28px;
+        border: 1px solid var(--kc-card-border);
+        border-radius: 24px;
+        background: var(--kc-card);
+        box-shadow: var(--kc-shadow);
         text-align: center;
+        backdrop-filter: blur(16px);
       }
 
-      .kc-overlay-recipe__meta-item:last-child {
-        border-right: 0;
+      .kc-icon {
+        width: 72px;
+        height: 72px;
+        margin-bottom: 18px;
+        border-radius: 18px;
       }
 
-      .kc-overlay-recipe__meta-label {
-        font-size: 0.625em;
-        font-weight: 600;
-        letter-spacing: 0.08em;
+      .kc-eyebrow {
+        margin: 0 0 10px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
         text-transform: uppercase;
-        color: var(--kc-muted);
+        color: var(--kc-accent-strong);
       }
 
-      .kc-overlay-recipe__meta-value {
-        font-size: 0.75em;
-        line-height: 1.2;
-        font-weight: 600;
-        text-transform: uppercase;
-        color: var(--kc-text);
-      }
-
-      .kc-overlay-recipe__section {
-        margin-bottom: 16px;
-      }
-
-      .kc-overlay-section__title {
-        margin: 0 0 8px;
-        font-size: 0.875em;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: var(--kc-text);
-      }
-
-      .kc-overlay-ingredients-list,
-      .kc-overlay-instructions-list {
-        font-size: 1.00625em;
-        line-height: 1.55;
-        color: var(--kc-text);
+      h1 {
         margin: 0;
-        padding: 8px;
+        font-size: clamp(2rem, 6vw, 2.6rem);
+        line-height: 1.02;
+        letter-spacing: -0.04em;
       }
 
-      .kc-overlay-instructions-list {
-        list-style: none;
-        padding-top: 0;
-      }
-
-      .kc-overlay-ingredient-item {
-        margin-bottom: 4px;
-        position: relative;
-        list-style: none;
-        padding-left: 12px;
-      }
-
-      .kc-overlay-ingredient-item::before {
-        content: "•";
-        position: absolute;
-        left: 0;
-        color: var(--kc-accent);
-      }
-
-      .kc-overlay-instruction-item {
-        margin-bottom: 8px;
-        padding: 8px 12px;
-        background: var(--kc-bg);
-        border-left: 3px solid var(--kc-accent);
-      }
-
-      .kc-source-link {
-        display: inline-block;
-        margin-top: 6px;
+      p {
+        margin: 14px 0 0;
+        font-size: 1rem;
+        line-height: 1.55;
         color: var(--kc-muted);
-        text-decoration: none;
-        font-size: 0.875em;
       }
 
-      .kc-source-link:hover {
-        color: var(--kc-text);
-        text-decoration: underline;
-      }
-
-      .kc-empty {
-        margin-top: 8px;
-        padding: 8px 10px;
-        border: 1px solid var(--kc-border);
-        color: var(--kc-muted);
-        font-size: 0.875em;
-        line-height: 1.45;
-      }
-
-      .kc-overlay-actions {
+      .kc-actions {
         display: grid;
-        margin-top: 20px;
-        padding-top: 16px;
-        grid-template-columns: 1fr;
-        align-items: stretch;
-        column-gap: 8px;
-        row-gap: 8px;
-        border-top: 1px solid var(--kc-border);
+        gap: 12px;
+        margin-top: 24px;
       }
 
-      .kc-overlay-btn {
+      .kc-button,
+      .kc-link {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
-        min-height: 40px;
-        border-radius: 6px;
-        border: 1px solid var(--kc-border);
-        padding: 10px 14px;
-        font-size: 0.875em;
-        font-weight: 700;
+        width: 100%;
+        min-height: 52px;
+        border-radius: 999px;
         text-decoration: none;
-        cursor: pointer;
-        transition: background-color 0.2s;
+        font-weight: 700;
       }
 
-      .kc-overlay-btn--primary {
+      .kc-button {
+        border: 0;
         background: var(--kc-accent);
-        color: #ffffff;
+        color: #241706;
       }
 
-      .kc-overlay-btn--primary:hover {
-        background: var(--kc-accent-dark);
+      .kc-button:hover {
+        background: #f6bf58;
       }
 
-      .kc-overlay-btn--secondary {
-        background: var(--kc-bg);
+      .kc-link {
+        color: var(--kc-muted);
+      }
+
+      .kc-link:hover {
         color: var(--kc-text);
-      }
-
-      .kc-overlay-btn--secondary:hover {
-        background: #f8f9fa;
-      }
-
-      @media (max-width: 22em) {
-        .kc-overlay-recipe__meta {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
-        .kc-overlay-recipe__meta-item {
-          border-right: 0;
-        }
-
-        .kc-overlay-recipe__meta-item:nth-child(odd) {
-          border-right: 1px solid var(--kc-border);
-        }
-
-        .kc-overlay-recipe__meta-item:nth-child(-n + 2) {
-          border-bottom: 1px solid var(--kc-border);
-        }
       }
 
       @media (prefers-color-scheme: dark) {
         :root {
-          --kc-bg: #1c1c1e;
-          --kc-surface: #1c1c1e;
-          --kc-text: #e0e0e0;
-          --kc-muted: #a0a0a0;
-          --kc-border: #333333;
+          --kc-bg: #17120d;
+          --kc-card: rgba(35, 28, 21, 0.9);
+          --kc-card-border: rgba(255, 255, 255, 0.08);
+          --kc-text: #f6efe7;
+          --kc-muted: #c7b9aa;
+          --kc-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
         }
 
-        .kc-overlay-btn--secondary:hover {
-          background: #2a2a2a;
+        body {
+          background:
+            radial-gradient(circle at top, rgba(76, 57, 24, 0.45), transparent 38%),
+            linear-gradient(180deg, #201811 0%, var(--kc-bg) 100%);
+        }
+
+        .kc-button {
+          color: #241706;
         }
       }
     </style>
   </head>
   <body>
-    <main class="kc-overlay-shell">
-      <article class="kc-overlay-recipe">
-        <div class="kc-card-content">
-          <header class="kc-overlay-recipe__header">
-            <h1 id="title" class="kc-overlay-recipe__title">Recipe unavailable</h1>
-          </header>
-
-          <section id="meta" class="kc-overlay-recipe__meta" hidden></section>
-
-          <section id="ingredientsSection" class="kc-overlay-recipe__section" hidden>
-            <h2 class="kc-overlay-section__title">Ingredients</h2>
-            <ul id="ingredients" class="kc-overlay-ingredients-list"></ul>
-          </section>
-
-          <section id="instructionsSection" class="kc-overlay-recipe__section" hidden>
-            <h2 class="kc-overlay-section__title">Instructions</h2>
-            <ol id="instructions" class="kc-overlay-instructions-list"></ol>
-          </section>
-
-          <a id="sourceLink" class="kc-source-link" href="#" rel="noopener noreferrer" hidden>View source page</a>
-          <div id="empty" class="kc-empty" hidden></div>
-
-          <footer class="kc-overlay-actions">
-            <a
-              id="openKitchenClipsButton"
-              class="kc-overlay-btn kc-overlay-btn--secondary"
-              href="https://apps.apple.com/us/app/kitchenclips/id6749102051"
-              rel="noopener noreferrer"
-            >
-              Open KitchenClips
-            </a>
-          </footer>
-        </div>
-      </article>
+    <main class="kc-card">
+      <img src="/assets/Icon.png" alt="KitchenClips logo" class="kc-icon" />
+      <p class="kc-eyebrow">KitchenClips</p>
+      <h1 id="headline">Opening in KitchenClips</h1>
+      <p id="message">
+        If the app is installed, this share should open automatically. If not, download
+        KitchenClips from the App Store.
+      </p>
+      <div class="kc-actions">
+        <a
+          id="cta"
+          class="kc-button"
+          href="https://apps.apple.com/us/app/kitchenclips/id6749102051"
+          rel="noopener noreferrer"
+        >
+          Open KitchenClips
+        </a>
+        <a
+          class="kc-link"
+          href="https://apps.apple.com/us/app/kitchenclips/id6749102051"
+          rel="noopener noreferrer"
+        >
+          Get KitchenClips on the App Store
+        </a>
+      </div>
     </main>
 
     <script>
-      (async function () {
+      (function () {
         const params = new URLSearchParams(window.location.search);
         const appStoreURL = "https://apps.apple.com/us/app/kitchenclips/id6749102051";
-        const shareAPIBaseURL = "https://shares.kitchenclips.org";
-        const shareID = clean(params.get("id")) || clean(params.get("share_id"));
-        const sourceURL = normalizeURL(params.get("url"));
-        const encodedRecipe = params.get("recipe");
-
-        const titleNode = document.getElementById("title");
-        const metaNode = document.getElementById("meta");
-        const ingredientsSection = document.getElementById("ingredientsSection");
-        const ingredientsNode = document.getElementById("ingredients");
-        const instructionsSection = document.getElementById("instructionsSection");
-        const instructionsNode = document.getElementById("instructions");
-        const sourceLinkNode = document.getElementById("sourceLink");
-        const emptyNode = document.getElementById("empty");
-        const openKitchenClipsButton = document.getElementById("openKitchenClipsButton");
-
-        let recipe = decodeRecipe(encodedRecipe);
-        if (!recipe && shareID) {
-          recipe = await fetchSharedRecipe(shareAPIBaseURL, shareID);
-        }
-        const recipeTitle = clean(recipe && recipe.name);
-        const ingredients = cleanLines(recipe && recipe.ingredients);
-        const instructions = cleanLines(recipe && recipe.instructions);
-        const servings = clean(firstOf(recipe && recipe.yields)) || clean(recipe && recipe.servings);
-        const prep = clean(recipe && recipe.prepTime);
-        const cook = clean(recipe && recipe.cookTime);
-        const total = clean(recipe && recipe.totalTime);
-
-        if (recipeTitle) {
-          titleNode.textContent = recipeTitle;
-          document.title = `${recipeTitle} | KitchenClips`;
-        } else if (sourceURL) {
-          titleNode.textContent = "Shared recipe";
-        }
-
-        const hasRecipeContent = Boolean(
-          recipeTitle || ingredients.length || instructions.length || servings || prep || cook || total
+        const ctaNode = document.getElementById("cta");
+        const headlineNode = document.getElementById("headline");
+        const messageNode = document.getElementById("message");
+        const deepLink = buildDeepLink(
+          clean(params.get("id")) || clean(params.get("share_id")),
+          normalizeURL(params.get("url")),
+          clean(params.get("recipe"))
         );
 
-        if (!hasRecipeContent) {
-          emptyNode.hidden = false;
-          if (shareID) {
-            emptyNode.textContent =
-              "This shared recipe may be unavailable or expired. You can still try opening it in KitchenClips.";
-          } else {
-            emptyNode.textContent =
-              "Recipe data is missing or invalid. You can still try opening this in KitchenClips.";
-          }
-        }
-
-        renderMeta(metaNode, [
-          { label: "Servings", value: servings },
-          { label: "Prep", value: prep },
-          { label: "Cook", value: cook },
-          { label: "Total", value: total }
-        ]);
-
-        renderLines(ingredientsSection, ingredientsNode, ingredients, "kc-overlay-ingredient-item");
-        renderLines(instructionsSection, instructionsNode, instructions, "kc-overlay-instruction-item");
-
-        if (sourceURL) {
-          sourceLinkNode.hidden = false;
-          sourceLinkNode.href = sourceURL;
-        }
-
-        const deepLink = buildDeepLink(shareID, sourceURL, encodedRecipe);
-        configureOpenKitchenClipsButton(openKitchenClipsButton, deepLink, appStoreURL);
+        configureCTA(ctaNode, deepLink, appStoreURL);
 
         if (deepLink) {
           attemptAutoOpenDeepLink(deepLink, appStoreURL);
+          return;
         }
+
+        headlineNode.textContent = "Get KitchenClips";
+        messageNode.textContent =
+          "This share opens in the KitchenClips app. Download it from the App Store to continue.";
+        ctaNode.textContent = "View on the App Store";
+        ctaNode.href = appStoreURL;
       })();
 
       function clean(value) {
@@ -382,125 +209,22 @@
         return trimmed ? trimmed : null;
       }
 
-      function firstOf(value) {
-        return Array.isArray(value) && value.length > 0 ? value[0] : null;
-      }
-
-      function cleanLines(values) {
-        if (!Array.isArray(values)) return [];
-        return values.map(clean).filter(Boolean);
-      }
-
       function normalizeURL(rawValue) {
         const value = clean(rawValue);
         if (!value) return null;
 
         try {
           const parsed = new URL(value);
-          if (parsed.protocol === "http:" || parsed.protocol === "https:") {
-            return parsed.toString();
-          }
-          return null;
-        } catch (_) {
-          try {
-            const parsed = new URL(`https://${value}`);
-            return parsed.toString();
-          } catch (_) {
-            return null;
-          }
-        }
-      }
-
-      function decodeRecipe(payload) {
-        const value = clean(payload);
-        if (!value) return null;
-
-        const normalized = value.replace(/-/g, "+").replace(/_/g, "/");
-        const padLength = (4 - (normalized.length % 4)) % 4;
-        const padded = normalized + "=".repeat(padLength);
-
-        try {
-          const binary = atob(padded);
-          const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
-          const json = new TextDecoder().decode(bytes);
-          return JSON.parse(json);
+          return parsed.protocol === "http:" || parsed.protocol === "https:" ? parsed.toString() : null;
         } catch (_) {
           return null;
         }
       }
 
-      async function fetchSharedRecipe(baseURL, shareID) {
-        const normalizedID = clean(shareID);
-        if (!normalizedID) return null;
-
-        const endpoint = `${baseURL.replace(/\/+$/, "")}/v1/shares/${encodeURIComponent(normalizedID)}`;
-        try {
-          const response = await fetch(endpoint, {
-            method: "GET",
-            headers: {
-              Accept: "application/json"
-            }
-          });
-          if (!response.ok) return null;
-          const body = await response.json();
-          const kind = clean(body && body.kind);
-          if (kind && kind.toLowerCase() !== "recipe") return null;
-          const payload = body && body.payload;
-          return payload && typeof payload === "object" ? payload : null;
-        } catch (_) {
-          return null;
-        }
-      }
-
-      function renderMeta(container, items) {
-        const visibleItems = items.filter((item) => Boolean(item.value));
-        if (!visibleItems.length) {
-          container.hidden = true;
-          return;
-        }
-
-        container.hidden = false;
-        container.innerHTML = "";
-
-        for (const item of visibleItems) {
-          const card = document.createElement("div");
-          card.className = "kc-overlay-recipe__meta-item";
-
-          const valueNode = document.createElement("strong");
-          valueNode.className = "kc-overlay-recipe__meta-value";
-          valueNode.textContent = item.value;
-
-          const labelNode = document.createElement("span");
-          labelNode.className = "kc-overlay-recipe__meta-label";
-          labelNode.textContent = item.label;
-
-          card.appendChild(valueNode);
-          card.appendChild(labelNode);
-          container.appendChild(card);
-        }
-      }
-
-      function renderLines(sectionNode, listNode, values, itemClassName) {
-        if (!values.length) {
-          sectionNode.hidden = true;
-          return;
-        }
-
-        sectionNode.hidden = false;
-        listNode.innerHTML = "";
-
-        for (const value of values) {
-          const item = document.createElement("li");
-          item.className = itemClassName;
-          item.textContent = value;
-          listNode.appendChild(item);
-        }
-      }
-
-      function configureOpenKitchenClipsButton(buttonNode, deepLink, appStoreURL) {
+      function configureCTA(buttonNode, deepLink, appStoreURL) {
         if (!buttonNode) return;
 
-        buttonNode.href = appStoreURL;
+        buttonNode.href = deepLink || appStoreURL;
         buttonNode.addEventListener("click", (event) => {
           if (!deepLink) return;
           event.preventDefault();
@@ -513,8 +237,8 @@
         if (params.get("no_auto_open") === "1") return;
 
         const ua = navigator.userAgent || "";
-        const isIOS = /iPhone|iPad|iPod/i.test(ua) ||
-          (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+        const isIOS =
+          /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
         if (!isIOS) return;
 
         const attemptFingerprint = [

@@ -3,29 +3,29 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>KitchenClips Shopping Cart Share</title>
-    <meta name="description" content="Open a shared shopping cart from KitchenClips." />
+    <title>Open in KitchenClips</title>
+    <meta name="description" content="Open this shared shopping cart in KitchenClips." />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="KitchenClips" />
-    <meta property="og:title" content="KitchenClips Shopping Cart Share" />
-    <meta property="og:description" content="Open a shared shopping cart from KitchenClips." />
+    <meta property="og:title" content="Open in KitchenClips" />
+    <meta property="og:description" content="Open this shared shopping cart in the KitchenClips app." />
     <meta property="og:url" content="https://kitchenclips.org/share/cart/" />
     <meta property="og:image" content="https://kitchenclips.org/share/cart/share-preview.png" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="KitchenClips Shopping Cart Share" />
-    <meta name="twitter:description" content="Open a shared shopping cart from KitchenClips." />
+    <meta name="twitter:title" content="Open in KitchenClips" />
+    <meta name="twitter:description" content="Open this shared shopping cart in the KitchenClips app." />
     <meta name="twitter:image" content="https://kitchenclips.org/share/cart/share-preview.png" />
     <meta name="apple-itunes-app" content="app-id=6749102051" />
     <style>
       :root {
-        --kc-accent: #ffc550;
-        --kc-accent-dark: #e6b148;
-        --kc-bg: #ffffff;
-        --kc-surface: #ffffff;
-        --kc-text: #212529;
-        --kc-muted: #6c757d;
-        --kc-border: #e9ecef;
-        --kc-success: #2d8a4b;
+        --kc-bg: #f7efe2;
+        --kc-card: rgba(255, 255, 255, 0.92);
+        --kc-card-border: rgba(82, 64, 44, 0.12);
+        --kc-text: #2e241b;
+        --kc-muted: #6e6256;
+        --kc-accent: #f0b649;
+        --kc-accent-strong: #db9c26;
+        --kc-shadow: 0 18px 40px rgba(73, 49, 22, 0.12);
       }
 
       * {
@@ -35,323 +35,168 @@
       html,
       body {
         margin: 0;
-        padding: 0;
         min-height: 100%;
-        background: var(--kc-bg);
+      }
+
+      body {
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background:
+          radial-gradient(circle at top, rgba(255, 255, 255, 0.85), transparent 42%),
+          linear-gradient(180deg, #fbf4e8 0%, var(--kc-bg) 100%);
         color: var(--kc-text);
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
       }
 
-      .kc-overlay-shell {
-        max-width: 760px;
-        margin: 0 auto;
-        min-height: 100vh;
+      .kc-card {
+        width: min(100%, 420px);
+        padding: 32px 28px;
+        border: 1px solid var(--kc-card-border);
+        border-radius: 24px;
+        background: var(--kc-card);
+        box-shadow: var(--kc-shadow);
+        text-align: center;
+        backdrop-filter: blur(16px);
       }
 
-      .kc-overlay-cart {
-        background: var(--kc-surface);
-        border: 1px solid var(--kc-border);
-        overflow: hidden;
+      .kc-icon {
+        width: 72px;
+        height: 72px;
+        margin-bottom: 18px;
+        border-radius: 18px;
       }
 
-      .kc-card-content {
-        padding: 16px;
-      }
-
-      .kc-overlay-cart__header {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        margin-bottom: 12px;
-        padding-bottom: 10px;
-        border-bottom: 1px solid var(--kc-border);
-      }
-
-      .kc-overlay-cart__eyebrow {
+      .kc-eyebrow {
+        margin: 0 0 10px;
         font-size: 0.75rem;
         font-weight: 700;
-        letter-spacing: 0.08em;
+        letter-spacing: 0.14em;
         text-transform: uppercase;
-        color: var(--kc-accent-dark);
+        color: var(--kc-accent-strong);
       }
 
-      .kc-overlay-cart__title {
+      h1 {
         margin: 0;
-        font-size: 1.15em;
-        font-weight: 600;
-        line-height: 1.4;
-        color: var(--kc-text);
+        font-size: clamp(2rem, 6vw, 2.6rem);
+        line-height: 1.02;
+        letter-spacing: -0.04em;
       }
 
-      .kc-overlay-cart__summary {
-        margin: 0;
-        font-size: 0.925rem;
-        color: var(--kc-muted);
-      }
-
-      .kc-overlay-cart__meta {
-        display: none;
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        margin-bottom: 12px;
-        color: var(--kc-muted);
-        border: 1px solid var(--kc-border);
-      }
-
-      .kc-overlay-cart__meta-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 2px;
-        min-width: 0;
-        padding: 10px 8px;
-        border-right: 1px solid var(--kc-border);
-        text-align: center;
-      }
-
-      .kc-overlay-cart__meta-item:last-child {
-        border-right: 0;
-      }
-
-      .kc-overlay-cart__meta-label {
-        font-size: 0.625em;
-        font-weight: 600;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: var(--kc-muted);
-      }
-
-      .kc-overlay-cart__meta-value {
-        font-size: 0.8em;
-        line-height: 1.2;
-        font-weight: 700;
-        text-transform: uppercase;
-        color: var(--kc-text);
-      }
-
-      .kc-overlay-cart__section {
-        margin-bottom: 16px;
-      }
-
-      .kc-overlay-section__title {
-        margin: 0 0 8px;
-        font-size: 0.875em;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: var(--kc-text);
-      }
-
-      .kc-overlay-cart__items {
-        margin: 0;
-        padding: 0;
-        list-style: none;
-        display: grid;
-        gap: 8px;
-      }
-
-      .kc-overlay-cart__item {
-        display: grid;
-        grid-template-columns: auto minmax(0, 1fr);
-        gap: 10px;
-        align-items: start;
-        padding: 10px 12px;
-        border: 1px solid var(--kc-border);
-        background: var(--kc-bg);
-      }
-
-      .kc-overlay-cart__status {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 22px;
-        height: 22px;
-        border-radius: 999px;
-        border: 1px solid var(--kc-border);
-        font-size: 0.78rem;
-        font-weight: 700;
-        color: var(--kc-muted);
-        background: var(--kc-surface);
-      }
-
-      .kc-overlay-cart__status--checked {
-        color: #ffffff;
-        background: var(--kc-success);
-        border-color: var(--kc-success);
-      }
-
-      .kc-overlay-cart__item-text {
+      p {
+        margin: 14px 0 0;
         font-size: 1rem;
-        line-height: 1.45;
-        color: var(--kc-text);
-      }
-
-      .kc-overlay-cart__item-text--checked {
-        text-decoration: line-through;
+        line-height: 1.55;
         color: var(--kc-muted);
       }
 
-      .kc-overlay-cart__item-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        margin-top: 6px;
-      }
-
-      .kc-overlay-cart__chip {
-        display: inline-flex;
-        align-items: center;
-        min-height: 22px;
-        padding: 0 8px;
-        border-radius: 999px;
-        background: rgba(255, 197, 80, 0.18);
-        color: var(--kc-text);
-        font-size: 0.78rem;
-        font-weight: 600;
-      }
-
-      .kc-empty {
-        margin-top: 8px;
-        padding: 8px 10px;
-        border: 1px solid var(--kc-border);
-        color: var(--kc-muted);
-        font-size: 0.875em;
-        line-height: 1.45;
-      }
-
-      .kc-overlay-actions {
+      .kc-actions {
         display: grid;
-        margin-top: 20px;
-        padding-top: 16px;
-        grid-template-columns: 1fr;
-        align-items: stretch;
-        column-gap: 8px;
-        row-gap: 8px;
-        border-top: 1px solid var(--kc-border);
+        gap: 12px;
+        margin-top: 24px;
       }
 
-      .kc-overlay-btn {
+      .kc-button,
+      .kc-link {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
-        min-height: 40px;
-        border-radius: 6px;
-        border: 1px solid var(--kc-border);
-        padding: 10px 14px;
-        font-size: 0.875em;
-        font-weight: 700;
+        width: 100%;
+        min-height: 52px;
+        border-radius: 999px;
         text-decoration: none;
-        cursor: pointer;
-        transition: background-color 0.2s;
+        font-weight: 700;
       }
 
-      .kc-overlay-btn--primary {
+      .kc-button {
+        border: 0;
         background: var(--kc-accent);
-        color: #ffffff;
+        color: #241706;
       }
 
-      .kc-overlay-btn--primary:hover {
-        background: var(--kc-accent-dark);
+      .kc-button:hover {
+        background: #f6bf58;
+      }
+
+      .kc-link {
+        color: var(--kc-muted);
+      }
+
+      .kc-link:hover {
+        color: var(--kc-text);
       }
 
       @media (prefers-color-scheme: dark) {
         :root {
-          --kc-bg: #1c1c1e;
-          --kc-surface: #1c1c1e;
-          --kc-text: #e0e0e0;
-          --kc-muted: #a0a0a0;
-          --kc-border: #333333;
-          --kc-success: #2f9d57;
+          --kc-bg: #17120d;
+          --kc-card: rgba(35, 28, 21, 0.9);
+          --kc-card-border: rgba(255, 255, 255, 0.08);
+          --kc-text: #f6efe7;
+          --kc-muted: #c7b9aa;
+          --kc-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+        }
+
+        body {
+          background:
+            radial-gradient(circle at top, rgba(76, 57, 24, 0.45), transparent 38%),
+            linear-gradient(180deg, #201811 0%, var(--kc-bg) 100%);
+        }
+
+        .kc-button {
+          color: #241706;
         }
       }
     </style>
   </head>
   <body>
-    <main class="kc-overlay-shell">
-      <article class="kc-overlay-cart">
-        <div class="kc-card-content">
-          <header class="kc-overlay-cart__header">
-            <div class="kc-overlay-cart__eyebrow">KitchenClips</div>
-            <h1 id="title" class="kc-overlay-cart__title">Shared shopping cart</h1>
-            <p id="summary" class="kc-overlay-cart__summary" hidden></p>
-          </header>
-
-          <section id="meta" class="kc-overlay-cart__meta" hidden></section>
-
-          <section id="itemsSection" class="kc-overlay-cart__section" hidden>
-            <h2 class="kc-overlay-section__title">Items</h2>
-            <ul id="items" class="kc-overlay-cart__items"></ul>
-          </section>
-
-          <div id="empty" class="kc-empty" hidden></div>
-
-          <footer class="kc-overlay-actions">
-            <a
-              id="openKitchenClipsButton"
-              class="kc-overlay-btn kc-overlay-btn--primary"
-              href="https://apps.apple.com/us/app/kitchenclips/id6749102051"
-              rel="noopener noreferrer"
-            >
-              Open KitchenClips
-            </a>
-          </footer>
-        </div>
-      </article>
+    <main class="kc-card">
+      <img src="/assets/Icon.png" alt="KitchenClips logo" class="kc-icon" />
+      <p class="kc-eyebrow">KitchenClips</p>
+      <h1 id="headline">Opening in KitchenClips</h1>
+      <p id="message">
+        If the app is installed, this cart should open automatically. If not, download
+        KitchenClips from the App Store.
+      </p>
+      <div class="kc-actions">
+        <a
+          id="cta"
+          class="kc-button"
+          href="https://apps.apple.com/us/app/kitchenclips/id6749102051"
+          rel="noopener noreferrer"
+        >
+          Open KitchenClips
+        </a>
+        <a
+          class="kc-link"
+          href="https://apps.apple.com/us/app/kitchenclips/id6749102051"
+          rel="noopener noreferrer"
+        >
+          Get KitchenClips on the App Store
+        </a>
+      </div>
     </main>
 
     <script>
-      (async function () {
+      (function () {
         const params = new URLSearchParams(window.location.search);
         const appStoreURL = "https://apps.apple.com/us/app/kitchenclips/id6749102051";
-        const shareAPIBaseURL = "https://shares.kitchenclips.org";
-        const shareID = clean(params.get("id")) || clean(params.get("share_id"));
-        const encodedCart = params.get("cart");
+        const ctaNode = document.getElementById("cta");
+        const headlineNode = document.getElementById("headline");
+        const messageNode = document.getElementById("message");
+        const deepLink = buildDeepLink(clean(params.get("id")) || clean(params.get("share_id")));
 
-        const titleNode = document.getElementById("title");
-        const summaryNode = document.getElementById("summary");
-        const metaNode = document.getElementById("meta");
-        const itemsSection = document.getElementById("itemsSection");
-        const itemsNode = document.getElementById("items");
-        const emptyNode = document.getElementById("empty");
-        const openKitchenClipsButton = document.getElementById("openKitchenClipsButton");
+        configureCTA(ctaNode, deepLink, appStoreURL);
 
-        let cart = decodePayload(encodedCart);
-        if (!cart && shareID) {
-          cart = await fetchSharedCart(shareAPIBaseURL, shareID);
-        }
-        const normalizedCart = normalizeCart(cart);
-
-        if (normalizedCart && normalizedCart.title) {
-          titleNode.textContent = normalizedCart.title;
-          document.title = normalizedCart.title + " | KitchenClips";
-        }
-
-        if (!normalizedCart || normalizedCart.items.length === 0) {
-          emptyNode.hidden = false;
-          emptyNode.textContent = shareID
-            ? "This shared shopping cart may be unavailable or expired."
-            : "Shopping cart data is missing or invalid.";
-          openKitchenClipsButton.href = appStoreURL;
+        if (deepLink) {
+          attemptAutoOpenDeepLink(deepLink, appStoreURL);
           return;
         }
 
-        const checkedCount = normalizedCart.items.filter((item) => item.isChecked).length;
-        const itemCount = normalizedCart.items.length;
-        const categoryCount = new Set(
-          normalizedCart.items.map((item) => item.category).filter(Boolean)
-        ).size;
-
-        summaryNode.hidden = false;
-        summaryNode.textContent = buildSummary(itemCount, checkedCount);
-
-        renderMeta(metaNode, [
-          { label: "Items", value: String(itemCount) },
-          { label: "Checked", value: String(checkedCount) },
-          { label: "Categories", value: categoryCount ? String(categoryCount) : null }
-        ]);
-        renderItems(itemsSection, itemsNode, normalizedCart.items);
-        openKitchenClipsButton.href = appStoreURL;
+        headlineNode.textContent = "Get KitchenClips";
+        messageNode.textContent =
+          "This cart opens in the KitchenClips app. Download it from the App Store to continue.";
+        ctaNode.textContent = "View on the App Store";
+        ctaNode.href = appStoreURL;
       })();
 
       function clean(value) {
@@ -360,167 +205,74 @@
         return trimmed ? trimmed : null;
       }
 
-      function decodePayload(payload) {
-        const value = clean(payload);
-        if (!value) return null;
+      function configureCTA(buttonNode, deepLink, appStoreURL) {
+        if (!buttonNode) return;
 
-        const normalized = value.replace(/-/g, "+").replace(/_/g, "/");
-        const padLength = (4 - (normalized.length % 4)) % 4;
-        const padded = normalized + "=".repeat(padLength);
-
-        try {
-          const binary = atob(padded);
-          const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
-          const json = new TextDecoder().decode(bytes);
-          return JSON.parse(json);
-        } catch (_) {
-          return null;
-        }
+        buttonNode.href = deepLink || appStoreURL;
+        buttonNode.addEventListener("click", (event) => {
+          if (!deepLink) return;
+          event.preventDefault();
+          openDeepLinkWithStoreFallback(deepLink, appStoreURL, { launchDelayMs: 0 });
+        });
       }
 
-      async function fetchSharedCart(baseURL, shareID) {
+      function attemptAutoOpenDeepLink(deepLink, appStoreURL) {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("no_auto_open") === "1") return;
+
+        const ua = navigator.userAgent || "";
+        const isIOS =
+          /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+        if (!isIOS) return;
+
+        const attemptFingerprint = [
+          window.location.pathname,
+          params.get("id") || params.get("share_id") || ""
+        ].join("|");
+        const attemptKey = "kc-cart-share-auto-open:" + attemptFingerprint;
+
+        try {
+          if (sessionStorage.getItem(attemptKey) === "1") return;
+          sessionStorage.setItem(attemptKey, "1");
+        } catch (_) {
+          // Ignore storage errors and still attempt once.
+        }
+
+        openDeepLinkWithStoreFallback(deepLink, appStoreURL, { launchDelayMs: 120 });
+      }
+
+      function openDeepLinkWithStoreFallback(deepLink, appStoreURL, options = {}) {
+        const launchDelayMs = Number.isFinite(options.launchDelayMs) ? options.launchDelayMs : 0;
+        const fallbackDelayMs = Number.isFinite(options.fallbackDelayMs) ? options.fallbackDelayMs : 1400;
+
+        let pageHidden = false;
+        const handleVisibilityChange = () => {
+          if (document.visibilityState === "hidden") {
+            pageHidden = true;
+          }
+        };
+
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+
+        window.setTimeout(() => {
+          if (document.visibilityState !== "visible") return;
+          window.location.assign(deepLink);
+        }, launchDelayMs);
+
+        window.setTimeout(() => {
+          document.removeEventListener("visibilitychange", handleVisibilityChange);
+          if (pageHidden || document.visibilityState !== "visible") return;
+          window.location.assign(appStoreURL);
+        }, launchDelayMs + fallbackDelayMs);
+      }
+
+      function buildDeepLink(shareID) {
         const normalizedID = clean(shareID);
         if (!normalizedID) return null;
 
-        const endpoint = `${baseURL.replace(/\/+$/, "")}/v1/shares/${encodeURIComponent(normalizedID)}`;
-        try {
-          const response = await fetch(endpoint, {
-            method: "GET",
-            headers: { Accept: "application/json" }
-          });
-          if (!response.ok) return null;
-          const body = await response.json();
-          const kind = clean(body && body.kind);
-          if (kind && !isCartKind(kind)) return null;
-          const payload = body && body.payload;
-          return payload && typeof payload === "object" ? payload : null;
-        } catch (_) {
-          return null;
-        }
-      }
-
-      function isCartKind(kind) {
-        const normalized = kind.toLowerCase();
-        return normalized === "cart" || normalized === "shopping_cart" || normalized === "shopping-cart";
-      }
-
-      function normalizeCart(payload) {
-        if (!payload || typeof payload !== "object") return null;
-        const rawItems = Array.isArray(payload.items) ? payload.items : [];
-        const items = rawItems.map(normalizeCartItem).filter(Boolean);
-        return {
-          title: clean(payload.title) || clean(payload.name) || "Shared shopping cart",
-          items: items
-        };
-      }
-
-      function normalizeCartItem(item) {
-        if (typeof item === "string") {
-          const text = clean(item);
-          return text ? { text: text, isChecked: false, recipeTitle: null, category: null } : null;
-        }
-
-        if (!item || typeof item !== "object") return null;
-
-        const text = clean(item.text) || clean(item.name) || clean(item.label);
-        if (!text) return null;
-
-        return {
-          text: text,
-          isChecked: Boolean(item.isChecked || item.checked),
-          recipeTitle: clean(item.recipeTitle) || clean(item.recipe) || null,
-          category: clean(item.category) || null
-        };
-      }
-
-      function buildSummary(itemCount, checkedCount) {
-        const itemLabel = itemCount === 1 ? "item" : "items";
-        if (!checkedCount) return `${itemCount} ${itemLabel}`;
-        const checkedLabel = checkedCount === 1 ? "checked off" : "checked off";
-        return `${itemCount} ${itemLabel} · ${checkedCount} ${checkedLabel}`;
-      }
-
-      function renderMeta(container, items) {
-        const visibleItems = items.filter((item) => Boolean(item.value));
-        if (!visibleItems.length) {
-          container.hidden = true;
-          return;
-        }
-
-        container.hidden = false;
-        container.innerHTML = "";
-
-        for (const item of visibleItems) {
-          const card = document.createElement("div");
-          card.className = "kc-overlay-cart__meta-item";
-
-          const valueNode = document.createElement("strong");
-          valueNode.className = "kc-overlay-cart__meta-value";
-          valueNode.textContent = item.value;
-
-          const labelNode = document.createElement("span");
-          labelNode.className = "kc-overlay-cart__meta-label";
-          labelNode.textContent = item.label;
-
-          card.appendChild(valueNode);
-          card.appendChild(labelNode);
-          container.appendChild(card);
-        }
-      }
-
-      function renderItems(sectionNode, listNode, items) {
-        if (!items.length) {
-          sectionNode.hidden = true;
-          return;
-        }
-
-        sectionNode.hidden = false;
-        listNode.innerHTML = "";
-
-        for (const item of items) {
-          const row = document.createElement("li");
-          row.className = "kc-overlay-cart__item";
-
-          const status = document.createElement("span");
-          status.className = item.isChecked
-            ? "kc-overlay-cart__status kc-overlay-cart__status--checked"
-            : "kc-overlay-cart__status";
-          status.textContent = item.isChecked ? "✓" : "";
-
-          const content = document.createElement("div");
-
-          const textNode = document.createElement("div");
-          textNode.className = item.isChecked
-            ? "kc-overlay-cart__item-text kc-overlay-cart__item-text--checked"
-            : "kc-overlay-cart__item-text";
-          textNode.textContent = item.text;
-          content.appendChild(textNode);
-
-          if (item.recipeTitle || item.category) {
-            const meta = document.createElement("div");
-            meta.className = "kc-overlay-cart__item-meta";
-
-            if (item.recipeTitle) {
-              const recipeChip = document.createElement("span");
-              recipeChip.className = "kc-overlay-cart__chip";
-              recipeChip.textContent = item.recipeTitle;
-              meta.appendChild(recipeChip);
-            }
-
-            if (item.category) {
-              const categoryChip = document.createElement("span");
-              categoryChip.className = "kc-overlay-cart__chip";
-              categoryChip.textContent = item.category;
-              meta.appendChild(categoryChip);
-            }
-
-            content.appendChild(meta);
-          }
-
-          row.appendChild(status);
-          row.appendChild(content);
-          listNode.appendChild(row);
-        }
+        const query = new URLSearchParams();
+        query.set("share_id", normalizedID);
+        return `kitchenclips://import?${query.toString()}`;
       }
     </script>
   </body>
