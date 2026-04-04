@@ -3,16 +3,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Open in KitchenClips</title>
+    <title>Recipe from KitchenClips</title>
     <meta name="description" content="Open this shared recipe in KitchenClips." />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="KitchenClips" />
-    <meta property="og:title" content="Open in KitchenClips" />
+    <meta property="og:title" content="Recipe from KitchenClips" />
     <meta property="og:description" content="Open this shared recipe in the KitchenClips app." />
     <meta property="og:url" content="https://kitchenclips.org/share" />
     <meta property="og:image" content="https://kitchenclips.org/share/share-preview.png" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Open in KitchenClips" />
+    <meta name="twitter:title" content="Recipe from KitchenClips" />
     <meta name="twitter:description" content="Open this shared recipe in the KitchenClips app." />
     <meta name="twitter:image" content="https://kitchenclips.org/share/share-preview.png" />
     <meta name="apple-itunes-app" content="app-id=6749102051" />
@@ -90,6 +90,19 @@
         color: var(--kc-muted);
       }
 
+      .kc-summary {
+        margin-top: 18px;
+        padding: 14px 16px;
+        border-radius: 18px;
+        background: rgba(240, 182, 73, 0.12);
+        color: var(--kc-text);
+        font-weight: 600;
+      }
+
+      .kc-summary[hidden] {
+        display: none;
+      }
+
       .kc-actions {
         display: grid;
         gap: 12px;
@@ -157,6 +170,7 @@
         If the app is installed, this share should open automatically. If not, download
         KitchenClips from the App Store.
       </p>
+      <p id="summary" class="kc-summary" hidden></p>
       <div class="kc-actions">
         <a
           id="cta"
@@ -183,12 +197,20 @@
         const ctaNode = document.getElementById("cta");
         const headlineNode = document.getElementById("headline");
         const messageNode = document.getElementById("message");
+        const summaryNode = document.getElementById("summary");
+        const recipeName = clean(params.get("name")) || clean(params.get("recipe_name"));
         const deepLink = buildDeepLink(
           clean(params.get("id")) || clean(params.get("share_id")),
           normalizeURL(params.get("url")),
           clean(params.get("recipe"))
         );
 
+        applyRecipeShareContent({
+          recipeName,
+          headlineNode,
+          messageNode,
+          summaryNode
+        });
         configureCTA(ctaNode, deepLink, appStoreURL);
 
         if (deepLink) {
@@ -202,6 +224,37 @@
         ctaNode.textContent = "View on the App Store";
         ctaNode.href = appStoreURL;
       })();
+
+      function applyRecipeShareContent({ recipeName, headlineNode, messageNode, summaryNode }) {
+        const fallbackTitle = "Recipe from KitchenClips";
+        const fallbackDescription = "Open this shared recipe in the KitchenClips app.";
+        const pageTitle = recipeName || fallbackTitle;
+        const pageDescription = recipeName
+          ? `Open ${recipeName} in the KitchenClips app.`
+          : fallbackDescription;
+
+        if (headlineNode && recipeName) {
+          headlineNode.textContent = recipeName;
+        }
+
+        if (messageNode && recipeName) {
+          messageNode.textContent =
+            "This recipe was shared from KitchenClips. Open it in the app to import it.";
+        }
+
+        if (summaryNode && recipeName) {
+          summaryNode.hidden = false;
+          summaryNode.textContent = `Recipe: ${recipeName}`;
+        }
+
+        updateMetaContent("title", pageTitle);
+        updateMetaContent('meta[name="description"]', pageDescription);
+        updateMetaContent('meta[property="og:title"]', pageTitle);
+        updateMetaContent('meta[property="og:description"]', pageDescription);
+        updateMetaContent('meta[property="og:url"]', window.location.href);
+        updateMetaContent('meta[name="twitter:title"]', pageTitle);
+        updateMetaContent('meta[name="twitter:description"]', pageDescription);
+      }
 
       function clean(value) {
         if (typeof value !== "string") return null;
@@ -293,6 +346,17 @@
         const queryString = query.toString();
         if (!queryString) return null;
         return `kitchenclips://import?${queryString}`;
+      }
+
+      function updateMetaContent(selector, value) {
+        if (!value) return;
+        if (selector === "title") {
+          document.title = value;
+          return;
+        }
+
+        const node = document.querySelector(selector);
+        if (node) node.setAttribute("content", value);
       }
     </script>
   </body>

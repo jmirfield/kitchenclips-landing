@@ -3,16 +3,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Open in KitchenClips</title>
+    <title>Shopping Cart from KitchenClips</title>
     <meta name="description" content="Open this shared shopping cart in KitchenClips." />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="KitchenClips" />
-    <meta property="og:title" content="Open in KitchenClips" />
+    <meta property="og:title" content="Shopping Cart from KitchenClips" />
     <meta property="og:description" content="Open this shared shopping cart in the KitchenClips app." />
     <meta property="og:url" content="https://kitchenclips.org/share/cart/" />
     <meta property="og:image" content="https://kitchenclips.org/share/cart/share-preview.png" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Open in KitchenClips" />
+    <meta name="twitter:title" content="Shopping Cart from KitchenClips" />
     <meta name="twitter:description" content="Open this shared shopping cart in the KitchenClips app." />
     <meta name="twitter:image" content="https://kitchenclips.org/share/cart/share-preview.png" />
     <meta name="apple-itunes-app" content="app-id=6749102051" />
@@ -90,6 +90,43 @@
         color: var(--kc-muted);
       }
 
+      .kc-items {
+        margin: 20px 0 0;
+        padding: 16px 18px;
+        border-radius: 20px;
+        background: rgba(240, 182, 73, 0.12);
+        text-align: left;
+      }
+
+      .kc-items[hidden] {
+        display: none;
+      }
+
+      .kc-items-title {
+        margin: 0 0 10px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--kc-accent-strong);
+      }
+
+      .kc-items-list {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--kc-text);
+      }
+
+      .kc-items-list li + li {
+        margin-top: 8px;
+      }
+
+      .kc-items-more {
+        margin-top: 12px;
+        font-size: 0.95rem;
+        color: var(--kc-muted);
+      }
+
       .kc-actions {
         display: grid;
         gap: 12px;
@@ -157,6 +194,11 @@
         If the app is installed, this cart should open automatically. If not, download
         KitchenClips from the App Store.
       </p>
+      <section id="itemsPreview" class="kc-items" hidden>
+        <p class="kc-items-title">Items in this cart</p>
+        <ul id="itemsList" class="kc-items-list"></ul>
+        <p id="itemsMore" class="kc-items-more" hidden></p>
+      </section>
       <div class="kc-actions">
         <a
           id="cta"
@@ -183,8 +225,24 @@
         const ctaNode = document.getElementById("cta");
         const headlineNode = document.getElementById("headline");
         const messageNode = document.getElementById("message");
+        const itemsPreviewNode = document.getElementById("itemsPreview");
+        const itemsListNode = document.getElementById("itemsList");
+        const itemsMoreNode = document.getElementById("itemsMore");
+        const cartTitle = clean(params.get("title"));
+        const sharedItems = params.getAll("item").map(clean).filter(Boolean);
+        const itemCount = parsePositiveInteger(params.get("item_count"));
         const deepLink = buildDeepLink(clean(params.get("id")) || clean(params.get("share_id")));
 
+        applyCartShareContent({
+          cartTitle,
+          sharedItems,
+          itemCount,
+          headlineNode,
+          messageNode,
+          itemsPreviewNode,
+          itemsListNode,
+          itemsMoreNode
+        });
         configureCTA(ctaNode, deepLink, appStoreURL);
 
         if (deepLink) {
@@ -199,10 +257,81 @@
         ctaNode.href = appStoreURL;
       })();
 
+      function applyCartShareContent({
+        cartTitle,
+        sharedItems,
+        itemCount,
+        headlineNode,
+        messageNode,
+        itemsPreviewNode,
+        itemsListNode,
+        itemsMoreNode
+      }) {
+        const previewCount = sharedItems.length;
+        const totalCount = itemCount || previewCount;
+        const summaryLabel = buildCartSummary(sharedItems, totalCount);
+        const pageTitle = summaryLabel || cartTitle || "Shopping Cart from KitchenClips";
+        const pageDescription = totalCount > 0
+          ? `Open a shared KitchenClips cart with ${totalCount} item${totalCount === 1 ? "" : "s"}.`
+          : "Open this shared shopping cart in the KitchenClips app.";
+
+        if (headlineNode) {
+          headlineNode.textContent = cartTitle || "Shared Shopping Cart";
+        }
+
+        if (messageNode && totalCount > 0) {
+          messageNode.textContent = `This cart includes ${totalCount} item${totalCount === 1 ? "" : "s"}. Open it in KitchenClips to add everything at once.`;
+        }
+
+        if (itemsPreviewNode && itemsListNode && previewCount > 0) {
+          itemsPreviewNode.hidden = false;
+          itemsListNode.replaceChildren(
+            ...sharedItems.map((item) => {
+              const listItem = document.createElement("li");
+              listItem.textContent = item;
+              return listItem;
+            })
+          );
+        }
+
+        if (itemsMoreNode) {
+          const overflowCount = Math.max(totalCount - previewCount, 0);
+          itemsMoreNode.hidden = overflowCount <= 0;
+          if (overflowCount > 0) {
+            itemsMoreNode.textContent = `Plus ${overflowCount} more item${overflowCount === 1 ? "" : "s"}.`;
+          }
+        }
+
+        updateMetaContent("title", pageTitle);
+        updateMetaContent('meta[name="description"]', pageDescription);
+        updateMetaContent('meta[property="og:title"]', pageTitle);
+        updateMetaContent('meta[property="og:description"]', pageDescription);
+        updateMetaContent('meta[property="og:url"]', window.location.href);
+        updateMetaContent('meta[name="twitter:title"]', pageTitle);
+        updateMetaContent('meta[name="twitter:description"]', pageDescription);
+      }
+
       function clean(value) {
         if (typeof value !== "string") return null;
         const trimmed = value.trim();
         return trimmed ? trimmed : null;
+      }
+
+      function parsePositiveInteger(value) {
+        const parsed = Number.parseInt(value, 10);
+        return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+      }
+
+      function buildCartSummary(items, totalCount) {
+        if (!items.length) {
+          return totalCount > 0
+            ? `${totalCount} Cart Item${totalCount === 1 ? "" : "s"} from KitchenClips`
+            : null;
+        }
+
+        const joinedItems = items.join(", ");
+        const overflowCount = Math.max(totalCount - items.length, 0);
+        return overflowCount > 0 ? `${joinedItems} +${overflowCount} more` : joinedItems;
       }
 
       function configureCTA(buttonNode, deepLink, appStoreURL) {
@@ -273,6 +402,17 @@
         const query = new URLSearchParams();
         query.set("share_id", normalizedID);
         return `kitchenclips://import?${query.toString()}`;
+      }
+
+      function updateMetaContent(selector, value) {
+        if (!value) return;
+        if (selector === "title") {
+          document.title = value;
+          return;
+        }
+
+        const node = document.querySelector(selector);
+        if (node) node.setAttribute("content", value);
       }
     </script>
   </body>
